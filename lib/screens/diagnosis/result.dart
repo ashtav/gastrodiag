@@ -13,7 +13,19 @@ class Result extends StatefulWidget {
 
 class _ResultState extends State<Result> {
 
+  importCsv(String filename) async{
+    final csv = await rootBundle.loadString('assets/files/'+filename);
+    List<dynamic> result = CsvToListConverter().convert(csv); // convert string ke dalam array
+    return result;
+  }
+
   var data = [], success = 0, countErr = 0, error = 0, totalRow = 0, errPercent = 0.0, sucPercent = 0.0, isInit = false, kelas, diagnosis = '';
+  var solusi = [
+    '<br>1. Makan makanan dengan tekstur halus dan mudah dicerna, seperti roti, kentang, atau pisang.<br><br> 2. Jangan makan atau minum yang mengandung susu atau tinggi gula, seperti es krim, soda, dan permen.<br><br> 3. Jangan mengkonsumsi obat diare yang dijual bebas tanpa resep, kecuali atas anjuran dokter. Pemberian obat sakit perut jenis apa pun sebaiknya dikonsultasikan terlebih dahulu dengan dokter.',
+    '<br>1. Mengatur Pola Makan, pengidap perlu membuat pola dan jadwal makan yang teratur. Bila tidak nafsu makan atau merasa cepat kenyang, pengidap bisa menyiasatinya dengan makan sedikit-sedikit, tapi sering.<br><br> 2. Hindari Jenis Makanan Tertentu Pengidap juga dianjurkan untuk menghindari makanan berminyak, asam, ataupun pedas yang bisa membuat gejala gastritis bertambah parah.'+
+    '<br><br>3. Kurangi Minuman Beralkohol, Alkohol juga merupakan minuman yang tidak baik untuk lambung yang sedang mengalami peradangan. Karena itu, pengidap gastritis dianjurkan untuk mengurangi, bahkan kalau bisa menghentikan kebiasaan minum minuman beralkohol.'+
+    '<br><br>4. Hindari Stres, Faktor lainnya yang juga bisa memicu timbulnya gastritis adalah stres. Karena itu, pengidap dianjurkan untuk mengendalikan tingkat stresnya agar bisa cepat sembuh.'
+  ];
 
   // init diagnosa
   initDiagnosis(){
@@ -66,53 +78,57 @@ class _ResultState extends State<Result> {
 
   // baca file csv
   readCsv() async{
-    final csv = await rootBundle.loadString('assets/files/datatest.csv');
-    List<dynamic> result = CsvToListConverter().convert(csv); // convert string ke dalam array
-
-    // hitung total data dari file csv
-    totalRow = result.length;
-
     // nilai gejala atau nilai jawaban (g1-g8)
     var g = widget.data, q = [g['g1'], g['g2'], g['g3'], g['g4'], g['g5'], g['g6'], g['g7'], g['g8']];
-    
-    // cocokkan nilai dari gejala dengan data uji
-    // for (var i = 0; i < result.length; i++) {
-    //   var res = result[i];
-      
-    //   if(res[0] == q[0] && res[1] == q[1] && res[2] == q[2] && res[3] == q[3] && res[4] == q[4] && res[5] == q[5] && res[6] == q[6] && res[7] == q[7]){
-    //     success += 1; kelas = res[8];
-    //   }else{
-    //     error += 1;
-    //   }
-    // }
 
-    // revisi cara hitung untuk mencocokkan jawaban dengan data
-    for (var i = 0; i < result.length; i++) {
-      var res = result[i];
-      
-      // jika jawaban g1 - g8 dengan data g1 - g8 cocok
-      if(res[0] == q[0] && res[1] == q[1] && res[2] == q[2] && res[3] == q[3] && res[4] == q[4] && res[5] == q[5] && res[6] == q[6] && res[7] == q[7]){
+    // IMPORT CSV UNTUK PERSENTASE
+    var csvPersentase = await importCsv('dataujiwadek.csv');
+
+    // looping data uji untuk persentasenya
+    for(var p = 0; p < csvPersentase.length; p++){
+      var res = csvPersentase[p];
+
+      // role : jika satu gejala cocok dengan data, maka success = +1, jika semua gejala tidak cocok dengan data maka error = +1
+
+      if(res[0] == q[0] || res[1] == q[1] || res[2] == q[2] || res[3] == q[3] || res[4] == q[4] || res[5] == q[5] || res[6] == q[6] || res[7] == q[7]){
         // maka hitung sebagai sukses
-        success += 1; kelas = res[8];
+        success += 1;
       }else{
         countErr += 1;
       }
     }
 
+    errPercent = error / csvPersentase.length * 100;
+    sucPercent = success / csvPersentase.length * 100;
+
+    print('error : '+error.toString());
+    print('success : '+success.toString());
+
+    // IMPORT CSV UNTUK DIAGNOSA
+    var csvDiagnosa = await importCsv('datawadek.csv');
+
+    // revisi cara hitung untuk mencocokkan jawaban dengan data
+    for (var i = 0; i < csvDiagnosa.length; i++) {
+      var res = csvDiagnosa[i];
+      
+      // jika jawaban g1 - g8 dengan data g1 - g8 cocok
+      if(res[0] == q[0] && res[1] == q[1] && res[2] == q[2] && res[3] == q[3] && res[4] == q[4] && res[5] == q[5] && res[6] == q[6] && res[7] == q[7]){
+        // maka hitung sebagai sukses
+        // success += 1; 
+        kelas = res[8];
+      }else{
+        // countErr += 1;
+      }
+    }
+
     // jika antara jawaban (g1-g8) dengan data(g1-g8) tidak ada yang cocok sama sekali, maka hitung error
-    if(countErr == result.length){
+    if(countErr == csvDiagnosa.length){
       error += 1;
     }
 
-    errPercent = error / totalRow * 100;
-    sucPercent = success / totalRow * 100;
-
     diagnosis = kelas == 2 ? 'Gastreonteritis' : 'Gastritis';
-
-    print('total data : '+totalRow.toString());
-    print('error : '+error.toString());
-    print('success : '+success.toString());
-    var diagnos = kelas == 1 ? 'Gastreonteritis' : kelas == 2 ? 'Gastritis' : 'Tidak ditemukan';
+   
+    var diagnos = kelas == 1 ? 'Gastreonteritis' : 'Gastritis';
     print('kelas : '+kelas.toString()+' ('+diagnos+')');
 
     isInit = true;
@@ -194,6 +210,7 @@ class _ResultState extends State<Result> {
                      ),
 
                      text('Solusi : ', bold: true),
+                     html(kelas == 2 ? solusi[0] : solusi[1])
                    ],
                  ),
                ),
