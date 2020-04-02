@@ -126,10 +126,17 @@ class _ResultState extends State<Result> {
       error += 1;
     }
 
-    diagnosis = kelas == 2 ? 'Gastreonteritis' : 'Gastritis';
+    // revisi!!! -> jika g3 == 2 ? Gastreonteritis : Gastritis
+    if(g['g3'] == 2){ // bab -> lebih >= 3x
+      diagnosis = 'Gastreonteritis';
+    }else{
+      diagnosis = kelas == 1 ? 'Gastreonteritis' : 'Gastritis';
+    }
+
+    // diagnosis = kelas == 1 ? 'Gastreonteritis' : 'Gastritis';
    
-    var diagnos = kelas == 1 ? 'Gastreonteritis' : 'Gastritis';
-    print('kelas : '+kelas.toString()+' ('+diagnos+')');
+    // var diagnos = kelas == 1 ? 'Gastreonteritis' : 'Gastritis';
+    // print('kelas : '+kelas.toString()+' ('+diagnos+')');
 
     isInit = true;
   }
