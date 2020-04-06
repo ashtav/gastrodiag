@@ -22,6 +22,7 @@ class _ResultState extends State<Result> {
   var data = [], success = 0, countErr = 0, error = 0, totalRow = 0, errPercent = 0.0, sucPercent = 0.0, isInit = false, kelas, diagnosis = '';
   var solusi = [
     '<br>1. Makan makanan dengan tekstur halus dan mudah dicerna, seperti roti, kentang, atau pisang.<br><br> 2. Jangan makan atau minum yang mengandung susu atau tinggi gula, seperti es krim, soda, dan permen.<br><br> 3. Jangan mengkonsumsi obat diare yang dijual bebas tanpa resep, kecuali atas anjuran dokter. Pemberian obat sakit perut jenis apa pun sebaiknya dikonsultasikan terlebih dahulu dengan dokter.',
+    
     '<br>1. Mengatur Pola Makan, pengidap perlu membuat pola dan jadwal makan yang teratur. Bila tidak nafsu makan atau merasa cepat kenyang, pengidap bisa menyiasatinya dengan makan sedikit-sedikit, tapi sering.<br><br> 2. Hindari Jenis Makanan Tertentu Pengidap juga dianjurkan untuk menghindari makanan berminyak, asam, ataupun pedas yang bisa membuat gejala gastritis bertambah parah.'+
     '<br><br>3. Kurangi Minuman Beralkohol, Alkohol juga merupakan minuman yang tidak baik untuk lambung yang sedang mengalami peradangan. Karena itu, pengidap gastritis dianjurkan untuk mengurangi, bahkan kalau bisa menghentikan kebiasaan minum minuman beralkohol.'+
     '<br><br>4. Hindari Stres, Faktor lainnya yang juga bisa memicu timbulnya gastritis adalah stres. Karena itu, pengidap dianjurkan untuk mengendalikan tingkat stresnya agar bisa cepat sembuh.'
@@ -217,7 +218,7 @@ class _ResultState extends State<Result> {
                      ),
 
                      text('Solusi : ', bold: true),
-                     html(kelas == 2 ? solusi[0] : solusi[1])
+                     html(kelas == 1 ? solusi[0] : solusi[1])
                    ],
                  ),
                ),
