@@ -129,7 +129,7 @@ class _ResultState extends State<Result> {
 
     // revisi!!! -> jika g3 == 2 ? Gastreonteritis : Gastritis
     if(g['g3'] == 2){ // bab -> lebih >= 3x
-      diagnosis = 'Gastreonteritis';
+      diagnosis = 'Gastreonteritis'; kelas = 1;
     }else{
       diagnosis = kelas == 1 ? 'Gastreonteritis' : 'Gastritis';
     }
@@ -137,7 +137,7 @@ class _ResultState extends State<Result> {
     // diagnosis = kelas == 1 ? 'Gastreonteritis' : 'Gastritis';
    
     // var diagnos = kelas == 1 ? 'Gastreonteritis' : 'Gastritis';
-    // print('kelas : '+kelas.toString()+' ('+diagnos+')');
+    print('kelas : '+diagnosis);
 
     isInit = true;
   }
@@ -216,7 +216,8 @@ class _ResultState extends State<Result> {
                          ],
                        ),
                      ),
-
+                    
+                    // solusi[0] = gastreonteritis, solusi[1] = Gastritis
                      text('Solusi : ', bold: true),
                      html(kelas == 1 ? solusi[0] : solusi[1])
                    ],
